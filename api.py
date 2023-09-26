@@ -1,5 +1,9 @@
-{
-  "materias": [
+from flask import Flask, jsonify, request
+
+app = Flask(__name__)
+
+# json
+materias = [
     {
       "id": 1,
       "nome": "Matemática",
@@ -149,47 +153,177 @@
         "História do Capitalismo",
         "Idade moderna",
         "Idade contemporânea"
-      ],
-      "tarefas": [
+      ]
+    },
+]
+
+tarefas = [
         {
             "id": 1,
             "matéria": "Matemática",
-            "nome-tarefa": "Tarefa 1",
-            "realizado": false
+            "nome-tarefa": "Tarefa 1"
         },
         {
           "id": 2,
           "matéria": "Português",
-          "nome-tarefa": "Tarefa 1",
-          "realizado": false
+          "nome-tarefa": "Tarefa 1"
         },
         {
           "id": 3,
           "matéria": "Ciências",
-          "nome-tarefa": "Tarefa 1",
-          "realizado": false
+          "nome-tarefa": "Tarefa 1"
         },
         {
           "id": 4,
           "matéria": "Geografia",
-          "nome-tarefa": "Tarefa 1",
-          "realizado": false
+          "nome-tarefa": "Tarefa 1"
         },
         {
           "id": 5,
           "matéria": "História",
-          "nome-tarefa": "Tarefa 1",
-          "realizado": false
-        }
-      ],
-      "usuarios": [
+          "nome-tarefa": "Tarefa 1"
+        },
+]
+
+usuarios = [
         {
             "id": 1,
             "tipo": ["educador", "aluno"],
             "nome": "Bruno Paiva de Araújo",
             "email": "bruno_pa38@hotmail.com"
-        }
+        },
       ]
-    }
-  ]
-}
+
+# consultar (todos)
+@app.route('/materias',methods=['GET'])
+def obter_materias():
+    return jsonify(materias)
+
+@app.route('/tarefas',methods=['GET'])
+def obter_tarefas():
+    return jsonify(tarefas)
+
+@app.route('/usuarios',methods=['GET'])
+def obter_usuarios():
+    return jsonify(usuarios)
+
+
+# consultar (id)
+@app.route('/materias/<int:id>',methods=['GET'])
+def obter_materia_por_id(id):
+    for materia in materias:
+        if materia.get('id') == id:
+            return jsonify(materia)
+        
+@app.route('/tarefas/<int:id>',methods=['GET'])
+def obter_tarefa_por_id(id):
+    for tarefa in tarefas:
+        if tarefa.get('id') == id:
+            return jsonify(tarefa)     
+        
+@app.route('/usuarios/<int:id>',methods=['GET'])
+def obter_usuario_por_id(id):
+    for usuario in usuarios:
+        if usuario.get('id') == id:
+            return jsonify(usuario)   
+
+# criar (id)
+@app.route('/materias',methods=['POST'])
+def incluir_nova_materia():
+    nova_materia = request.get_json()
+    materias.append(nova_materia)
+    return jsonify(materias)
+
+@app.route('/tarefas',methods=['POST'])
+def incluir_nova_tarefa():
+    nova_tarefa = request.get_json()
+    tarefas.append(nova_tarefa)
+    return jsonify(tarefas)
+
+@app.route('/usuarios',methods=['POST'])
+def incluir_novo_usuario():
+    novo_usuario = request.get_json()
+    usuarios.append(novo_usuario)
+    return jsonify(usuarios)
+
+# editar
+@app.route('/materias/<int:id>',methods=['PUT'])
+def editar_materias_por_id(id):
+    materia_alterada = request.get_json()
+    for indice,materia in enumerate(materias):
+        if materia.get('id') == id:
+            materias[indice].update(materia_alterada)
+            return jsonify(materias[indice])
+        
+@app.route('/tarefas/<int:id>',methods=['PUT'])
+def editar_tarefas_por_id(id):
+    tarefa_alterada = request.get_json()
+    for indice,tarefa in enumerate(tarefas):
+        if tarefa.get('id') == id:
+            tarefas[indice].update(tarefa_alterada)
+            return jsonify(tarefas[indice])
+        
+@app.route('/usuarios/<int:id>',methods=['PUT'])
+def editar_usuarios_por_id(id):
+    usuario_alterado = request.get_json()
+    for indice,usuario in enumerate(usuarios):
+        if usuario.get('id') == id:
+            usuarios[indice].update(usuario_alterado)
+            return jsonify(usuarios[indice])
+
+# excluir
+@app.route('/materias/<int:id>',methods=['DELETE'])
+def excluir_materia(id):
+    for indice, materia in enumerate(materias):
+        if materia.get('id') == id:
+            del materias[indice]
+    return jsonify(materias)
+
+@app.route('/tarefas/<int:id>',methods=['DELETE'])
+def excluir_tarefa(id):
+    for indice, tarefa in enumerate(tarefas):
+        if tarefa.get('id') == id:
+            del tarefas[indice]
+    return jsonify(tarefas)
+
+@app.route('/usuarios/<int:id>',methods=['DELETE'])
+def excluir_usuario(id):
+    for indice, usuario in enumerate(usuarios):
+        if usuario.get('id') == id:
+            del usuarios[indice]
+    return jsonify(usuarios)
+
+
+
+app.run(port=5000,host='localhost',debug=True)
+
+
+# Endpoint
+
+    # materias
+    # - localhost/materias (GET)
+    # - localhost/materias/id (GET)
+    # - localhost/materias/id (POST)
+    # - localhost/materias/id (PUT)
+    # - localhost/materias/id (DELETE)
+    
+    # tarefas
+    # - localhost/tarefas (GET)
+    # - localhost/tarefas/id (GET)
+    # - localhost/tarefas/id (POST)
+    # - localhost/tarefas/id (PUT)
+    # - localhost/tarefas/id (DELETE)
+    
+    # usuarios
+    # - localhost/usuarios (GET)
+    # - localhost/usuarios/id (GET)
+    # - localhost/usuarios/id (POST)
+    # - localhost/usuarios/id (PUT)
+    # - localhost/usuarios/id (DELETE)
+    
+
+# recursos
+
+    # - materias
+    # - tarefas
+    # - usuarios
